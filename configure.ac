@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.61)
-AC_INIT(pdl, 0.0.1, valiska@gmail.com)
+AC_INIT(pdl, 0.0.2, valiska@gmail.com)
 AC_CONFIG_SRCDIR([src/system.hh])
 AC_CONFIG_HEADER([config.h])
 
@@ -66,20 +66,20 @@ if test "x$disable_assertions" = "xyes"; then
 #	CFLAGS="-DNDEBUG $CFLAGS"
 fi
 
-PDL_CFLAGS="-I$includedir"
+PDL_CLAGS="-I$includedir"
 PDL_LIBS="-L$libdir -lpdlib"
 
-AC_SUBST(PDL_CFLAGS)
+AC_SUBST(PDL_CLAGS)
 AC_SUBST(PDL_LIBS)
 
 PKG_CHECK_MODULES(DUNE, dune-geometry)
-
 
 AC_CONFIG_FILES([Makefile
 		pdlib.pc pdlib-config
 		pdlib/Makefile
 		src/Makefile
 		src/geom/Makefile
+		src/geom/tests/Makefile
 		src/tests/Makefile
 		])
 AC_OUTPUT

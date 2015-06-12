@@ -21,19 +21,10 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
 
-#ifndef PDLL_BOX_HH
-# define PDL_BOX_HH
-
-#ifdef HAVE_CONFIG_H
-# include "config.h"     
-#endif
+#ifndef PDLIB_GEO_BOX_HH
+# define PDLIB_GEO_BOX_HH
 
 #include <dune/common/fvector.hh>
-
-#ifdef DEBUG
-# undef DEBUG
-#endif
-//#define DEBUG
 
 namespace PDL 
 {
@@ -63,7 +54,7 @@ namespace PDL
 
 				Space randomPoint () 
 				{
-					Dune::FieldVector<ctype,dim> x;
+					Space x;
 					for (int i = 0; i < dim; i++)
 					{
 						x[i] = xl[i] + static_cast <double> (rand()) /( static_cast <double> (RAND_MAX/(H[i])));
@@ -71,7 +62,7 @@ namespace PDL
 					return x;
 				}
 
-				bool inside (const Dune::FieldVector<ctype,dim> & x) const
+				bool inside (const Space & x) const
 				{
 #ifdef DEBUG
 					std::cerr << "x= " << x << std::endl;
