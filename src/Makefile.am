@@ -1,4 +1,4 @@
-SUBDIRS = geom tests
+SUBDIRS = geom particles tests
 
 pkgincludedir=$(includedir)/pdlib
 pkginclude_HEADERS = system.hh

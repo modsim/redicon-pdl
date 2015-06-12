@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.61)
-AC_INIT(pdl, 0.0.2, valiska@gmail.com)
+AC_INIT(pdl, 0.0.4, valiska@gmail.com)
 AC_CONFIG_SRCDIR([src/system.hh])
 AC_CONFIG_HEADER([config.h])
 
@@ -80,6 +80,8 @@ AC_CONFIG_FILES([Makefile
 		src/Makefile
 		src/geom/Makefile
 		src/geom/tests/Makefile
+		src/particles/Makefile
+		src/particles/tests/Makefile
 		src/tests/Makefile
 		])
 AC_OUTPUT

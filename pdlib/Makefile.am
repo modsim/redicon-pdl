@@ -1,5 +1,5 @@
 # the directories in src to process
-DIRS = . geom
+DIRS = . geom particles
 header-links: remove-links
 	for d in $(DIRS); do \
 	    HEADERLIST=`ls $(top_srcdir)/src/$$d/*.hh`; \
