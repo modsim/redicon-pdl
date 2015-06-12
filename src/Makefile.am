@@ -1,3 +1,6 @@
-SUBDIRS = tests
+SUBDIRS = geom tests
 
-EXTRA_DIST = system.hh
+pkgincludedir=$(includedir)/pdlib
+pkginclude_HEADERS = system.hh
+
+#EXTRA_DIST = system.hh

@@ -1,3 +1,26 @@
+// system.hh 
+// system of particles and reactions
+//
+// This file is part of Particle Dynamic Library (PDL), 
+// a templeted library for particle dynamic
+// 
+// Copyright (C) 2015 Valiska @ FZJ
+// 
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or (at
+// your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+
 #ifndef PDLIB_SYSTEM_HH
 # define PDLIB_SYSTEM_HH
 
@@ -9,6 +32,10 @@
 # undef DEBUG
 #endif
 //#define DEBUG
+
+
+namespace PDL 
+{
 
 template<class P>
 class null_reaction
@@ -60,13 +87,7 @@ class System
 		template<typename... Args>
 		bool addParticle (Args... args)
 		{
-			//typename Geometry::Space x = geo.randomPoint();
-
-			// This is for testing
-			typename Geometry::Space x;
-			x[0] = 3.; x[1] = 17.; 
-			x[2] = 2.;
-
+			typename Geometry::Space x = geo.randomPoint();
 			Particle * p = F.createParticle(x, args...);
 			return addParticle (p);
 		}
@@ -79,7 +100,7 @@ class System
 		}
 
 
-		void removeParticle (int number)
+		void delParticle (int number)
 		{
 			delete plist.at (number);
 			//std::cerr << "particle # " << number << " of " << getNParticles() << std::endl;
@@ -90,7 +111,11 @@ class System
 		Particle * getParticle (int i) const {return plist.at (i);};
 		int getNParticles () const {return plist.size ();};
 
-		typename Geometry::Space particlePosition (int i) {Particle * p = plist.at(i); return p->position(); };
+		typename Geometry::Space particlePosition (int i) 
+		{
+			Particle * p = plist.at(i); 
+			return p->position(); 
+		};
 
 		void print (const std::string & fname) 
 		{
@@ -149,7 +174,7 @@ class System
 				}
 			}
 
-			// now make a kinetic move
+			// now make a dynamic move
 			for (typename std::vector<Particle*>::iterator ps = plist.begin(); ps != plist.end(); ++ps)
 			{
 			//	(*ps)->move (dt, geo, plist);
@@ -169,7 +194,10 @@ class System
 		Factory & F;
 		std::vector<Particle*> plist;
 		std::vector<Reaction> rxnlist;
-		int number;
+		int number; // total number of particles
 
 };
+
+}; // End of namespace PDL
+
 #endif

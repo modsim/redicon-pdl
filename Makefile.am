@@ -1,4 +1,4 @@
-SUBDIRS = src
+SUBDIRS = pdlib src
 
 bin_SCRIPTS = pdlib-config
 

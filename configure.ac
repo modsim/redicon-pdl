@@ -2,16 +2,16 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.61)
-AC_INIT(pdl, 0.0.0, valiska@gmail.com)
+AC_INIT(pdl, 0.0.1, valiska@gmail.com)
 AC_CONFIG_SRCDIR([src/system.hh])
 AC_CONFIG_HEADER([config.h])
 
-PACKAGE=mplib
+PACKAGE=pdl
 VERSION=0.0.0
 
 dnl IFACE_NUMBER (current) : REV : AGE (< IFACE_NUMBER)
-MPLIB_LT_VERSION="0:0:0"
-AC_SUBST(MPLIB_LT_VERSION)
+PDL_LT_VERSION="0:0:0"
+AC_SUBST(PDL_LT_VERSION)
 
 AC_SUBST(PACKAGE)
 AC_SUBST(PACKAGE_STRING)
@@ -62,19 +62,24 @@ AC_ARG_ENABLE(assertions,
 			      disable_assertions=no)
 
 if test "x$disable_assertions" = "xyes"; then
-	CFLAGS="-DMPLIB_NO_ASSERT $CFLAGS"
+	CFLAGS="-DPDL_NO_ASSERT $CFLAGS"
 #	CFLAGS="-DNDEBUG $CFLAGS"
 fi
 
-PDLIB_CFLAGS="-I$includedir"
-PDLIB_LIBS="-L$libdir -lpdlib"
+PDL_CFLAGS="-I$includedir"
+PDL_LIBS="-L$libdir -lpdlib"
 
-AC_SUBST(PDLIB_CFLAGS)
-AC_SUBST(PDLIB_LIBS)
+AC_SUBST(PDL_CFLAGS)
+AC_SUBST(PDL_LIBS)
+
+PKG_CHECK_MODULES(DUNE, dune-geometry)
+
 
 AC_CONFIG_FILES([Makefile
 		pdlib.pc pdlib-config
+		pdlib/Makefile
 		src/Makefile
+		src/geom/Makefile
 		src/tests/Makefile
 		])
 AC_OUTPUT
