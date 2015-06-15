@@ -24,15 +24,9 @@
 #ifndef PDLIB_SYSTEM_HH
 # define PDLIB_SYSTEM_HH
 
-#ifdef HAVE_CONFIG_H
-# include "config.h"     
-#endif
-
-#ifdef DEBUG
-# undef DEBUG
-#endif
-//#define DEBUG
-
+#include <vector>
+#include <string>
+#include <fstream>
 
 namespace PDL 
 {
@@ -42,7 +36,7 @@ class null_reaction
 {
 	public:
 		const int order = -1;
-		bool apply (const P * , std::vector<P*> *) {return false;}
+		bool apply (const P * , double dt, std::vector<P*> *) {return false;}
 		//{std::vector<P*> l; return l;};
 };
 
@@ -65,10 +59,9 @@ class System
 #ifdef DEBUG
 				std::cerr << "removing particle " << i << std::endl;
 #endif				
-				removeParticle(i);
+				delParticle (i);
 			}
 		}
-
 
 		// type is `abstract' particle type to make it possible to create
 		// particles of different types (types depend on the implementation)
@@ -158,12 +151,13 @@ class System
 					for (int i = 0; i < getNParticles(); i++)
 					{
 						Particle * p = getParticle (i);
-						if ( (*rxn).apply (p, &newplist) )
+						if ( (*rxn).apply (p, dt, &newplist) )
 						{
 #ifdef DEBUG						
 							std::cerr << "Removing particle " << i << std::endl;
 #endif							
-							removeParticle (i); // this is particle number
+							if (p->remove)
+								delParticle (i); // this is particle number
 						}
 					}
 					for (typename std::vector<Particle*>::iterator newp = newplist.begin(); newp != newplist.end(); ++newp)

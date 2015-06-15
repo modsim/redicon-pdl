@@ -1,5 +1,5 @@
 # the directories in src to process
-DIRS = . geom particles
+DIRS = . geom particles mingen
 header-links: remove-links
 	for d in $(DIRS); do \
 	    HEADERLIST=`ls $(top_srcdir)/src/$$d/*.hh`; \
