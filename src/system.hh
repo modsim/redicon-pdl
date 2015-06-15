@@ -47,7 +47,7 @@ class System
 
 		typedef typename Factory::Particle Particle;
 
-		System (Geometry & G, Factory & F) : geo(G), F(F), number (0) 
+		System (Geometry & G, Factory & F) : geo(G), F(F), number (0), t (0)
 		{
 //			static_assert (typename Particle::Space == typename Geometry::Space, "Particle and geometry inconsistent");
 		};
@@ -156,7 +156,7 @@ class System
 #ifdef DEBUG						
 							std::cerr << "Removing particle " << i << std::endl;
 #endif							
-							if (p->remove)
+							if (p->remove())
 								delParticle (i); // this is particle number
 						}
 					}
@@ -176,12 +176,13 @@ class System
 				if (!(*ps)->move (dt, geo))
 					return false;
 			}
-
+			t += dt;
 			return true;
 		};
 
 		std::vector<Particle*> particleList () {return plist;};
 
+		double time () const {return t;};
 	private:
 
 		Geometry & geo;
@@ -189,6 +190,7 @@ class System
 		std::vector<Particle*> plist;
 		std::vector<Reaction> rxnlist;
 		int number; // total number of particles
+		double t; // current time
 
 };
 

@@ -31,10 +31,10 @@ class MinGenParticle
 		typedef typename Geometry::Space Space;
 
 		MinGenParticle (const Space & x, double t, double kon, double koff, double kmbasal, double km)
-			: remove(false), _type(MINGEN_GENE), g (x, 0, kon, koff, kmbasal, km), number (0) {};
+			: _type(MINGEN_GENE), g (x, 0, kon, koff, kmbasal, km), number (0) {};
 
 		MinGenParticle (const Space & x, double D, double dt, double kdeg)
-			: remove(false), _type(MINGEN_GENE), m (x, D, dt, kdeg), number (0) {};
+			: _type(MINGEN_MRNA), m (x, D, dt, kdeg), number (0) {};
 
 		bool move (double dt, Geometry geo)
 		{
@@ -55,9 +55,11 @@ class MinGenParticle
 		{
 			switch (_type)
 			{
-				case MINGEN_MRNA: return m.position();
+				case MINGEN_MRNA:
+					return m.position();
 
-				case MINGEN_GENE: return g.position ();
+				case MINGEN_GENE: 
+					return g.position ();
 
 				default:
 					throw "MinGenParticle: Unknown particle type ";
@@ -71,9 +73,15 @@ class MinGenParticle
 
 		// this is a public variable to tell if this particle needs to be removed 
 		// by a system after 1st order reaction (mRNA needs, Gene does not)
-		bool remove; 
+		bool remove (void)
+		{
+			if (_type == MINGEN_MRNA)
+				return true;
 
-		MinGenParticleType type (void) {return _type;};
+			return false;
+		}; 
+
+		MinGenParticleType type (void) const {return _type;};
 
 		PDL::MinGen::mRNA<Geometry> * getMRNA (void)
 		{
@@ -115,7 +123,7 @@ class MinGenFactory
 		: kon (kon), koff (koff), kmbasal (kmbasal), km(km),
 			D(D), dt (dt) , kdeg (kdeg) {};
 
-		MinGenParticle<Geometry> * createParticle (const typename Geometry::Space & x, MinGenParticleType type)
+		MinGenParticle<Geometry> * createParticle (const typename Geometry::Space & x, MinGenParticleType type) const
 		{
 			switch (type)
 			{
@@ -143,21 +151,22 @@ class MinGenReaction
 
 		MinGenReaction (const MinGenFactory<Geometry> & F) : F(F) {};
 
-		bool apply (const MinGenParticle<Geometry> * p, double dt, std::vector<MinGenParticle<Geometry>*> * l)
+		bool apply (MinGenParticle<Geometry> * p, double dt, std::vector<MinGenParticle<Geometry>*> * l)
 		{
 			switch (p->type())
 			{
-				case MINGEN_MRNA: 
+				case MINGEN_MRNA:
+				{
 					PDL::MinGen::mRNA<Geometry> * m = p->getMRNA ();
 					if (m->degrade(dt))
 					{
-						p->remove = true;
+						std::cerr << "I am dying...." << std::endl;
 						return true;
 					}
-					else
-						return false;
-
+					break;
+				}
 				case MINGEN_GENE: 
+				{
 					PDL::MinGen::Gene<Geometry> * g = p->getGene ();
 
 					if (g->mRNA (dt))
@@ -167,12 +176,13 @@ class MinGenReaction
 						l->push_back (mnew);
 						return true;
 					}
-					else
-						return false;
+					break;
+				}
 
 				default:
 					throw "MinGenReaction: Unknown particle type ";
 			}
+			return false;
 		};
 	private:
 		const MinGenFactory<Geometry> & F;

@@ -41,9 +41,10 @@ namespace PDL
 
 				Gene (const Space & x, double t, 
 					double kon, double koff, double kmbasal, double km)  : 
-					x(x), time (t), 
-					GeneOn (false), Kon (kon), Koff (koff), timeOn(0), timeOff(0), dT (0),
-					Kmbasal (kmbasal), Kmon (km), timeMRNA (0), NmRNA (0)
+					time (t), X(x), 
+					GeneOn (false), 
+					Kon (kon), Koff (koff), timeOn(0), timeOff(0),
+					Km(kmbasal), Kmbasal (kmbasal), Kmon (km), NmRNA (0)
 				{};
 
 				// for a Gene move() means switch state
@@ -55,22 +56,14 @@ namespace PDL
 					if (GeneOn)
 					{
 						timeOn += dt;
-						dT += dt;
 						if (switchOff (dt))
-						{
-							dT = 0;
 							Km = Kmbasal;
-						}
 					}
 					else
 					{
 						timeOff += dt;
-						dT += dt;
 						if (switchOn (dt))
-						{
-							dT = 0;
 							Km = Kmon;
-						}
 					}
 					return true;
 
@@ -83,11 +76,10 @@ namespace PDL
 					//PDL_WARNING (dt < tMRNA, "time step smaller than the average mRNA production time");
 					
 					double r = (rand()/(double)(RAND_MAX));
-					timeMRNA += dt;
-					double prob = 1. - exp (- Km * timeMRNA);
-					if (r > prob)
+					//std::cerr << "Gene ON: " << GeneOn << " Km=" << Km << std::endl;
+					double prob = 1. - exp (- Km * dt);
+					if (r < prob)
 					{
-						timeMRNA = 0;
 						NmRNA++;
 						return true;
 					}
@@ -100,15 +92,15 @@ namespace PDL
 					//PDL_WARNING (dt < tMRNA, "time step smaller than the average mRNA production time");
 					PDL::MinGen::mRNA<Geometry> * m = (PDL::MinGen::mRNA<Geometry>*) nullptr;
 					if (mRNA (dt))
-						m = new PDL::MinGen::mRNA<Geometry>  (x, D, dt, kdeg);
+						m = new PDL::MinGen::mRNA<Geometry>  (X, D, dt, kdeg);
 					return m;
 				}
 
-				const Space & position (void) const {return x;};
+				const Space & position (void) const {return X;};
 
-				void printStat (std::ostream * stream)
+				void printStat (std::ostream * stream) const 
 				{
-					*stream << "*** Gene Position: " << x << " ***" << std::endl;
+					*stream << "*** Gene Position: " << X << " ***" << std::endl;
 					*stream << "Total life time: " << time << std::endl;
 					*stream << "Total time in On state: " << timeOn << std::endl;
 					*stream << "Total time in Off state: " << timeOff << std::endl;
@@ -125,7 +117,7 @@ namespace PDL
 			private:
 
 				double time; // total time
-				const Space & x;
+				const Space & X;
 
 				//
 				// Gene state
@@ -135,7 +127,6 @@ namespace PDL
 				const double Koff;
 				double timeOn; // total time on
 				double timeOff; // total time off
-				double dT; // time elapsed since the last state switch
 
 				//
 				// mRNA
@@ -144,7 +135,6 @@ namespace PDL
 				const double Kmbasal; // basal (state-off) rate constant for mRNA
 				const double Kmon;   // state-on rate constant for mRNA
 
-				double timeMRNA; // time since the last mRNA birth
 				unsigned long int NmRNA; // number of mRNA created (for stat)
 
 				// Switch on/off

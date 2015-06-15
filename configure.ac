@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.61)
-AC_INIT(pdl, 0.1.1, valiska@gmail.com)
+AC_INIT(pdl, 0.1.2, valiska@gmail.com)
 AC_CONFIG_SRCDIR([src/system.hh])
 AC_CONFIG_HEADER([config.h])
 

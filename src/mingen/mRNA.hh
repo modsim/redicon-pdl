@@ -46,17 +46,14 @@ namespace PDL
 				bool degrade (double dt)
 				{
 					//PDL_WARNING (dt < tdeg, "time step smaller than the rate degradation constant");
-
-					time += dt;
-					double r = (rand()/(double)(RAND_MAX + 1));
-					double prob = 1. - exp (- kdeg * time);
-					if (r > prob)
+					double r = (rand()/(double)(RAND_MAX));
+					double prob = 1. - exp (- kdeg * dt);
+					if (r < prob)
 						return true; // I will be deleted by the system as I leave the list empty
+					return false;
 				}
 
 			private:
-
-				double time;
 				const double kdeg;
 
 		};
