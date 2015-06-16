@@ -160,7 +160,7 @@ class MinGenReaction
 					PDL::MinGen::mRNA<Geometry> * m = p->getMRNA ();
 					if (m->degrade(dt))
 					{
-						std::cerr << "I am dying...." << std::endl;
+//						std::cerr << "I am dying...." << std::endl;
 						return true;
 					}
 					break;

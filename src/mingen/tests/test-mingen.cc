@@ -1,4 +1,6 @@
-/*  test MinGen class  2015-06-15
+/* test MinGen class  2015-06-15
+ *
+ * Units: [D] = mu2/s, [k] = 1/s
  *
  * Copyright (C) 2015 Svyatoslav Kondrat (Valiska)
  *
@@ -28,25 +30,31 @@ int main (int argc, char ** argv)
 	x0[0] = 0.; x0[1] = 0.;
 
 	Dune::FieldVector<double, 2> H;
-	H[0] = 10.; H[1] = 10.;
+	H[0] = 2.; H[1] = 2.;
 
 	typedef PDL::GeometryBox<double, 2> Box;
 	Box b (x0,H);
 
 	Dune::FieldVector<double, 2> x;
-	x[0] = 5.; x[1] = 5.;
+	x[0] = 1.; x[1] = 1.;
 	
-	double dt = 0.01;
+	double dt = .1;
 
 	// Gene
-	double kon = 5.;
-	double koff = 5.;
-	double kmbasal = 5;
-	double km = 25;
+	// Kon = Koff = 0.16(6) 1/s (Nat Gen 6, 455, 2005)
+	// for graded: half-life ~ 0.5/hour ~ 0.001 (1)/s
+	double kon  = 0.0001;
+	double koff = 0.0001;
 
-	// mRNA 
-	double D = 0.1;
-	double kdeg = 1.;
+	// Km = 50/min ~ 0.83(3) /s, Kmbasal = 5/min (Nat Gen 6, 455, 2005)
+	double kmbasal = 0.02;
+	double km = 0.2;
+
+	// mRNA
+	// D = 0.01 - 0.03 mum2/s (Nat Comm 4 2414, 2013)
+	double D = 0.01;
+	// Kdeg = 0.1/min ~ 0.0016(6)/s (Nat Gen 6, 455, 2005)
+	double kdeg = 0.001;
 
 	typedef MinGenFactory<Box> Factory;
 	Factory F (kon, koff, kmbasal, km, D, dt, kdeg);
@@ -59,19 +67,27 @@ int main (int argc, char ** argv)
 
 	system.addParticle (x, MINGEN_GENE);
 
-	std::cout << "Number of particles " << system.getNParticles() << std::endl;
-	for (int i =0; i < 10000; i++)
+	std::ofstream stream;
+//	stream.open("mRNA.dat", std::ios_base::app);
+	stream.open("mRNA.dat");
+
+	int tfinal = 20*60*60;
+	int N = rint (tfinal/dt);
+	int skip = 60;
+	int iskip = 1;
+	for (int i =0; i < N; i++)
 	{
 		system.evolve (dt);
-		//system.printPositions();
-		
-		std::vector<Factory::Particle*> plist = system.particleList (); 
-		std::cerr << std::endl;
-		std::cerr << "*** t=" << system.time() << " (" << system.getNParticles() - 1 << " mRNA) ***" << std::endl;
-		for (typename std::vector<Factory::Particle*>::iterator ps = plist.begin(); ps != plist.end(); ++ps)
+
+		stream << system.time() << "     " << system.getNParticles() - 1 << std::endl;
+	
+		if ( !(iskip < skip) )
 		{
-			std::cerr << (*ps)->position() << std::endl;
+			std::cerr << "*** t=" << system.time()/60 << " (" << system.getNParticles() - 1 
+				<< " mRNA) ***" << std::endl;
+			iskip = 0;
 		}
+		iskip++;
 	}
 
 	// Check gene statistics
