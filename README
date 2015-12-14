@@ -1,6 +1,6 @@
 This is Particle Dynamics Library (PDL), a simple C++ templatized library for particle dynamics. 
 
-This library is a part of REDICON, REaction DIffusion systems via DIscrete-CONtinuous modelling (Olav Zimmermann)
+This library is a part of REDICON, REaction DIffusion systems via DIscrete-CONtinuous modelling (name proposed by Olav Zimmermann)
 
 PDL consists essentially of a class PDL::System (system.h). It is a Geometry and particle Factory template class. Currently PDL contains Box geometry and Factory of Brownian particles, but more particle/geometries may be added in the future. 
 
